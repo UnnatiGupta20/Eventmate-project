@@ -27,10 +27,10 @@ body {
 
 nav {
   display: flex;
-  max-width: 1500px;
-  min-width: 1500px;
-  padding: 25px 10px 40px 10px;
-  margin-bottom: 25px;
+  max-width: 150px;
+  min-width: 150px;
+  padding: 10px 10px 15px 10px;
+  margin-bottom: 20px;
   justify-content: space-between;
   position: relative;
   align-items: center;
@@ -51,7 +51,7 @@ nav .logo {
   flex: 1;
   display: flex;
   align-items: center;
-  font-size: 2rem;
+  font-size: 24px;
 }
 nav .navLinks {
   flex: 2;
@@ -168,10 +168,10 @@ nav svg {
 .hero .item {
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  background: #fff;
+  gap: 20px;
+  
   position: relative;
-  padding: 50px 20px;
+  padding: 30px 20px;
 }
 .hero .item h3 {
   font-family: "Alex Brush", cursive;

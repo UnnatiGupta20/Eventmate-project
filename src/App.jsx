@@ -19,20 +19,15 @@ import AddEvent from "./components/AddEvent";
 
 // Layout wrapper
 const Layout = ({ children }) => {
-  const location = useLocation();
-
-  // Hide Navbar & Footer on login/signup
-  const hideLayout =
-    location.pathname === "/login" || location.pathname === "/signup"  || location.pathname === "/addevent";
-
   return (
     <>
-      {!hideLayout && <Navbar />}
+      <Navbar />
       {children}
-      {!hideLayout && <Footer />}
+      <Footer />
     </>
   );
 };
+
 
 const App = () => {
   return (

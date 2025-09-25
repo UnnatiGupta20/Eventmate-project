@@ -1,0 +1,22 @@
+/* TimelineSection.css */
+.timeline-container {
+  position: relative;
+  margin: 30px 0;
+  padding-left: 20px; /* space for the timeline line */
+}
+
+.timeline-line {
+  position: absolute;
+  left: 25px;        /* middle of the timeline */
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: rgb(244, 34, 34);
+  border-radius: 2px;
+}
+
+.timeline-events {
+  display: flex;
+  width: 500px;
+  flex-direction: column;
+}

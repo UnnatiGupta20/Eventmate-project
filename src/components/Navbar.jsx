@@ -5,9 +5,15 @@ import { GiHamburgerMenu } from "react-icons/gi";
 const Navbar = () => {
   const [show, setShow] = useState(false);
 
+  // Get logged-in user from localStorage
+  
+
   return (
     <nav>
-      <div className="logo">EventMate</div>
+      <div className="logo">
+        EventMate
+        
+      </div>
       <div className={show ? "navLinks showmenu" : "navLinks"}>
         <div className="links">
           <Link to="/" onClick={() => setShow(false)}>HOME</Link>
