@@ -22,6 +22,7 @@ const Navbar = () => {
           <Link to="/contact" onClick={() => setShow(false)}>CONTACT</Link>
           <Link to="/login" onClick={() => setShow(false)}>Login</Link>
           <Link to="/signup" onClick={() => setShow(false)}>Signup</Link>
+          <Link to="/logout" onClick={() => setShow(false)}>Logout</Link>
         </div>
       </div>
       <div className="hamburger" onClick={() => setShow(!show)}>

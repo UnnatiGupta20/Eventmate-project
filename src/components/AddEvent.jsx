@@ -1,40 +1,52 @@
 import React, { useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
-
+import { useParams, useLocation, useNavigate } from "react-router-dom"; // ✅ include useNavigate
 
 const AddEvent = () => {
   const { id } = useParams();
   const location = useLocation();
-  const service = location.state; 
+  const service = location.state;
+
+  const navigate = useNavigate(); // ✅ initialize navigate here
 
   const [activeTab, setActiveTab] = useState("details");
-
   const [formData, setFormData] = useState({
-    name: "",
-    type: service?.title || "", 
-    description: "",
-    date: "",
-    time: "",
-    duration: "",
-    venue: "",
-    capacity: "",
-    guests: "",
-    notes: "",
+    eventName: "",
+    eventType: service?.title || "",
+    eventDescription: "",
+    eventDate: "",
+    eventTime: "",
+    eventDuration: "",
+    eventVenue: "",
+    eventCapacity: "",
+    eventGuests: "",
+    eventNotes: "",
   });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // send it to backend / database later
-    console.log("Event submitted:", formData);
+    try {
+      const response = await fetch("http://localhost:8080/addevent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, serviceId: id }),
+      });
 
-    
-    alert("Event submitted! (check console)");
-
-    
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Event saved:", data);
+        alert("Event saved successfully!");
+        navigate("/services"); // ✅ redirect after success
+      } else {
+        alert("Failed to save event");
+      }
+    } catch (error) {
+      console.error("Error saving event:", error);
+      alert("Error connecting to backend");
+    }
   };
 
   return (
@@ -80,30 +92,24 @@ const AddEvent = () => {
               <label>Event Name</label>
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="eventName"
+                value={formData.eventName}
                 onChange={handleChange}
                 placeholder="Enter event name"
               />
             </div>
 
-            
             <div>
               <label>Event Type</label>
-              <input
-                type="text"
-                name="type"
-                value={formData.type}
-                readOnly
-              />
+              <input type="text" name="eventType" value={formData.eventType} readOnly />
             </div>
 
             <div>
               <label>Event Description</label>
               <textarea
                 rows="4"
-                name="description"
-                value={formData.description}
+                name="eventDescription"
+                value={formData.eventDescription}
                 onChange={handleChange}
                 placeholder="Write details..."
               />
@@ -121,8 +127,8 @@ const AddEvent = () => {
               <label>Date</label>
               <input
                 type="date"
-                name="date"
-                value={formData.date}
+                name="eventDate"
+                value={formData.eventDate}
                 onChange={handleChange}
               />
             </div>
@@ -130,8 +136,8 @@ const AddEvent = () => {
               <label>Time</label>
               <input
                 type="time"
-                name="time"
-                value={formData.time}
+                name="eventTime"
+                value={formData.eventTime}
                 onChange={handleChange}
               />
             </div>
@@ -139,8 +145,8 @@ const AddEvent = () => {
               <label>Duration (optional)</label>
               <input
                 type="text"
-                name="duration"
-                value={formData.duration}
+                name="eventDuration"
+                value={formData.eventDuration}
                 onChange={handleChange}
                 placeholder="e.g. 3 hours"
               />
@@ -157,8 +163,8 @@ const AddEvent = () => {
               <label>Venue</label>
               <input
                 type="text"
-                name="venue"
-                value={formData.venue}
+                name="eventVenue"
+                value={formData.eventVenue}
                 onChange={handleChange}
                 placeholder="Enter venue"
               />
@@ -167,8 +173,8 @@ const AddEvent = () => {
               <label>Capacity</label>
               <input
                 type="number"
-                name="capacity"
-                value={formData.capacity}
+                name="eventCapacity"
+                value={formData.eventCapacity}
                 onChange={handleChange}
                 placeholder="How many people?"
               />
@@ -185,8 +191,8 @@ const AddEvent = () => {
               <label>Number of Guests</label>
               <input
                 type="number"
-                name="guests"
-                value={formData.guests}
+                name="eventGuests"
+                value={formData.eventGuests}
                 onChange={handleChange}
                 placeholder="Enter number of guests"
               />
@@ -195,14 +201,13 @@ const AddEvent = () => {
               <label>Special Notes</label>
               <textarea
                 rows="3"
-                name="notes"
-                value={formData.notes}
+                name="eventNotes"
+                value={formData.eventNotes}
                 onChange={handleChange}
                 placeholder="Any requirements for guests..."
               />
             </div>
 
-          
             <button type="submit" style={{ marginTop: "1rem" }}>
               Submit Event
             </button>

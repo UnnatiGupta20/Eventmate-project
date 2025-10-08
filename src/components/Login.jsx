@@ -18,16 +18,24 @@ const Login = () => {
         credentials: "include", // required for sessions
       });
 
-      const data = await response.json(); // always parse as JSON
-
-      if (data) { // user exists
-        alert("Login successful!");
-        localStorage.setItem("user", JSON.stringify(data)); // save user info
-        console.log(data);
-        navigate("/"); // navigate to home
-      } else {
-        alert("Invalid email or password!");
+      if (!response.ok) {
+        // if backend returned 401 or 500
+        const errorText = await response.text();
+        alert(errorText || "Login failed");
+        return;
       }
+
+      const data = await response.json(); // ✅ backend user object
+      alert(`Welcome ${data.username}!`); // ✅ accessing object property
+
+      // Save full object to localStorage
+      localStorage.setItem("user", JSON.stringify(data));
+
+      console.log("User ID:", data.id);
+      console.log("User Email:", data.email);
+      console.log("Full User Object:", data);
+
+      navigate("/"); // go to homepage
     } catch (error) {
       console.error("Login failed:", error);
       alert("Something went wrong. Please try again.");
