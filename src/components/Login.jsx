@@ -4,41 +4,48 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userData = { email, password };
+    setErrorMsg("");
 
     try {
-      const response = await fetch("http://localhost:8080/login", {
+      const res = await fetch("http://localhost:8080/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
-        credentials: "include", // required for sessions
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
       });
 
-      if (!response.ok) {
-        // if backend returned 401 or 500
-        const errorText = await response.text();
-        alert(errorText || "Login failed");
+      if (!res.ok) {
+        const text = await res.text();
+        setErrorMsg(text || "Login failed");
         return;
       }
 
-      const data = await response.json(); // ✅ backend user object
-      alert(`Welcome ${data.username}!`); // ✅ accessing object property
+      let data;
+      try {
+        data = await res.json();
+      } catch (err) {
+        console.error("Invalid JSON from server:", err);
+        setErrorMsg("Server error. Try again.");
+        return;
+      }
 
-      // Save full object to localStorage
-      localStorage.setItem("user", JSON.stringify(data));
+      if (!data.username) {
+        setErrorMsg("Login failed. Invalid response.");
+        return;
+      }
 
-      console.log("User ID:", data.id);
-      console.log("User Email:", data.email);
-      console.log("Full User Object:", data);
+      // Notify Navbar to update
+      window.dispatchEvent(new Event("authChange"));
 
-      navigate("/"); // go to homepage
-    } catch (error) {
-      console.error("Login failed:", error);
-      alert("Something went wrong. Please try again.");
+      navigate("/");
+    } catch (err) {
+      console.error("Network error:", err);
+      setErrorMsg("Something went wrong. Check your connection.");
     }
   };
 
@@ -46,6 +53,7 @@ const Login = () => {
     <div className="auth-page">
       <div className="auth-container">
         <h2>Login</h2>
+        {errorMsg && <div className="error-msg">{errorMsg}</div>}
         <form onSubmit={handleSubmit}>
           <input
             type="email"

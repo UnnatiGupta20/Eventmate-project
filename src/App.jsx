@@ -16,6 +16,7 @@ import Contact from "./components/Contact";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import AddEvent from "./components/AddEvent";
+import Logout from "./components/Logout";
 
 // Layout wrapper
 const Layout = ({ children }) => {
@@ -41,6 +42,8 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/addevent/:id" element={<AddEvent />} />
+          <Route path="/logout" element={<Logout />} />
+
         </Routes>
       </Layout>
     </Router>

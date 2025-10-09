@@ -3,6 +3,7 @@ package com.eventmate.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,8 +36,18 @@ public class UserController {
             session.setAttribute("user", loggedInUser);
 
             return ResponseEntity.ok(loggedInUser);  // ✅ return User object as JSON
+            
         } else {
             return ResponseEntity.status(401).body("Invalid email or password"); // ✅ return error
+        }
+    }
+    @GetMapping("/getSessionUser")
+    public ResponseEntity<?> getSessionUser(HttpSession session) {
+        User loggedInUser = (User) session.getAttribute("user");
+        if (loggedInUser != null) {
+            return ResponseEntity.ok(loggedInUser);
+        } else {
+            return ResponseEntity.status(401).body("No active session");
         }
     }
 

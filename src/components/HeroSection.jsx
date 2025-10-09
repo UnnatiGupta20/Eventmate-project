@@ -7,7 +7,7 @@ const HeroSection = () => {
     <section className="hero">
       <img src="/restaurant.jpg" alt="restaurant" />
       <div className="item">
-        {/* <TimelineSection/> */}
+        <TimelineSection/>
         
       </div>
       
