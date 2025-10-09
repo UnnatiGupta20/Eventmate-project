@@ -6,7 +6,7 @@ import com.eventmate.Entity.User;
 import java.util.List;
 
 
-public interface UserRepo extends JpaRepository<User, Long>{
+public interface UserRepo extends JpaRepository<User, Integer>{
 
 	User findByEmailAndPassword(String email, String password);
 }

@@ -6,11 +6,15 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,12 +36,17 @@ public class Event {
 	
 	@JsonFormat(pattern="HH:mm")
 	private LocalTime eventTime;
-	private String eventDuration;
-	private String eventVenue;
-	private Integer eventCapacity;
+	private Integer eventDuration;
+	private String eventCity;
+	private String eventHall;
 	private Integer eventGuests;
 	private String eventNotes;
 	private Integer serviceId;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="uid",referencedColumnName = "id")
+	@JsonIgnore
+	private User user;
 	
 
 }
