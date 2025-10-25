@@ -32,5 +32,21 @@ public class VenueServiceImpl implements VenueService{
 		// TODO Auto-generated method stub
 		return vr.findVenueCapacityByVenueHall(venueHall,venueCity);
 	}
+	@Override
+	public Venue save(Venue venue) {
+		// TODO Auto-generated method stub
+		return vr.save(venue);
+	}
+	@Override
+	public Double getRating(String venueCity, String venueHall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Venue getVenue(String venueCity, String venueHall) {
+		// TODO Auto-generated method stub
+		return vr.findByVenueCityAndVenueHall(venueCity, venueHall);
+	}
+	
 
 }

@@ -26,18 +26,17 @@ body {
 }
 
 nav {
-  display: flex;
-  max-width: 150px;
-  min-width: 150px;
-  padding: 10px 10px 15px 10px;
-  margin-bottom: 20px;
-  justify-content: space-between;
-  position: relative;
-  align-items: center;
-  border-bottom-right-radius: 7px;
-  border-bottom-left-radius: 7px;
+  width: 100%;
+  max-width: 1500px;
+  padding: 10px 20px;
   margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  border-bottom: 1px solid #ccc;
 }
+
 nav::after {
   content: "";
   position: absolute;
@@ -151,13 +150,17 @@ nav svg {
 }
 
 .hero {
-  position: relative;
-  height: 800px;
   width: 100%;
+  min-height: 100vh;
+  background-image: url("/restaurant.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: scroll; /* or fixed for parallax effect */
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .hero img {
   position: absolute;
   width: 100%;
