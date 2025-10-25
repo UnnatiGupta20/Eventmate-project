@@ -19,4 +19,6 @@ public class Venue {
 	private String venueCity;
 	private String venueHall;
 	private Integer venueCapacity;
+	private Double venueRating;
+	
 }

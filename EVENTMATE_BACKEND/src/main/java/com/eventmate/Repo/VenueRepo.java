@@ -19,6 +19,9 @@ public interface VenueRepo extends JpaRepository<Venue, Integer>{
 	@Query("select v.venueCapacity from Venue v where v.venueHall=:venueHall and v.venueCity=:venueCity")
     Integer findVenueCapacityByVenueHall(String venueHall,String venueCity);
 	
+//	Double findByVenueCityAndVenueHall(String venueCity,String venueHall);
+	Venue findByVenueCityAndVenueHall(String venueCity,String venueHall);
+	
 	
 	
 	

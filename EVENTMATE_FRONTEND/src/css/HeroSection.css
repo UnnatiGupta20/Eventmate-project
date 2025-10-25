@@ -1,0 +1,55 @@
+.dashboard {
+  display: flex;
+  height: 100vh;
+  font-family: "Nunito Sans", sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background-color: #a2783a;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.sidebar h2 {
+  margin-bottom: 30px;
+  font-size: 22px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin: 15px 0;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 8px;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+/* .sidebar ul li:hover {
+  background-color: #8a642f;
+} */
+
+/* Main content */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  background-color: #fff7ea;
+  overflow-y: auto;
+}
+
+.dashboard-content h3 {
+  margin-top: 0;
+}
+
+.dashboard-content p {
+  font-size: 14px;
+  opacity: 0.8;
+}
