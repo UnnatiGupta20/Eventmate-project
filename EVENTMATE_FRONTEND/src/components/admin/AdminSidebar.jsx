@@ -23,7 +23,7 @@ const AdminSidebar = () => {
         </NavLink>
       </nav>
       <div className="admin-logout">
-        <NavLink to="/logout" className="logout-btn">
+        <NavLink to="/" className="logout-btn">
           Logout
         </NavLink>
       </div>
