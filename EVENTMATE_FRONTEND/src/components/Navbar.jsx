@@ -1,73 +1,76 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { FaChevronDown } from "react-icons/fa";
 
 const Navbar = () => {
   const [show, setShow] = useState(false);
   const [user, setUser] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const checkSession = async () => {
-    try {
-      const res = await fetch("http://localhost:8080/getSessionUser", {
-        method: "GET",
-        credentials: "include", // ensures cookies/session are sent
-      });
-
-      if (!res.ok) {
-        setUser(null);
-        return;
-      }
-
-      let data;
-      try {
-        data = await res.json();
-      } catch (err) {
-        console.error("Invalid JSON from server:", err);
-        setUser(null);
-        return;
-      }
-
-      setUser(data && data.username ? data : null);
-    } catch (err) {
-      console.error("Network error:", err);
+  // ✅ Load user only when logged in
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser && storedUser !== "null") {
+      setUser(JSON.parse(storedUser));
+    } else {
       setUser(null);
     }
-  };
 
-  useEffect(() => {
-    checkSession();
+    const authListener = () => {
+      const updatedUser = localStorage.getItem("user");
+      setUser(updatedUser && updatedUser !== "null" ? JSON.parse(updatedUser) : null);
+    };
 
-    // Listen to login/logout events
-    const authListener = () => checkSession();
     window.addEventListener("authChange", authListener);
     return () => window.removeEventListener("authChange", authListener);
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+    setDropdownOpen(false);
+    window.dispatchEvent(new Event("authChange"));
+    navigate("/");
+  };
+
   return (
     <nav>
       <div className="logo">EventMate</div>
+
       <div className={show ? "navLinks showmenu" : "navLinks"}>
         <div className="links">
-          {user && <span style={{ marginRight: "1rem", fontWeight: "bold" }}>Hi: {user.username}</span>}
-          <Link to="/" onClick={() => setShow(false)}>HOME</Link>
-          <Link to="/services" onClick={() => setShow(false)}>SCHEDULE-AN-EVENT</Link>
-          <Link to="/about" onClick={() => setShow(false)}>ABOUT</Link>
-          <Link to="/contact" onClick={() => setShow(false)}>CONTACT</Link>
+          <Link to="/" onClick={() => setShow(false)}>Home</Link>
+          <Link to="/services" onClick={() => setShow(false)}>Services</Link>
+          <Link to="/about" onClick={() => setShow(false)}>About</Link>
+          <Link to="/contact" onClick={() => setShow(false)}>Contact</Link>
 
-          {!user && (
-            <>
-              <Link to="/login" onClick={() => setShow(false)}>LOGIN</Link>
-              <Link to="/signup" onClick={() => setShow(false)}>SIGNUP</Link>
-            </>
-          )}
+          {user ? (
+            <div className="user-dropdown">
+              <div
+                className="user-info"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+              >
+                Hello, <strong>{user.name}</strong> <FaChevronDown className="down-icon" />
+              </div>
 
-          {user && (
-            <>
-              <Link to="/logout" onClick={() => setShow(false)}>LOUOUT</Link>
-            </>
+              {dropdownOpen && (
+                <div className="dropdown-menu">
+                  <button onClick={() => { setDropdownOpen(false); navigate("/myaccount"); }}>My Account</button>
+                  <button onClick={() => { setDropdownOpen(false); navigate("/dashboard"); }}>Dashboard</button>
+                  <button onClick={handleLogout}>Logout</button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link to="/auth" onClick={() => setShow(false)} className="login-btn">
+              Login
+            </Link>
           )}
         </div>
       </div>
+
       <div className="hamburger" onClick={() => setShow(!show)}>
         <GiHamburgerMenu />
       </div>
@@ -76,4 +79,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

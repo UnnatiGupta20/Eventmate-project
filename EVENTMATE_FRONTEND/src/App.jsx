@@ -13,37 +13,80 @@ import HeroSection from "./components/HeroSection";
 import About from "./components/About";
 import Services from "./components/Services";
 import Contact from "./components/Contact";
-import Login from "./components/Login";
-import Signup from "./components/Signup";
+import AuthPage from "./components/Authpage";
+import MyAccount from "./components/MyAccount";
+import CompleteProfile from "./components/CompleteProfile";
+import CustomerDashboard from "./components/CustomerDashboard";
 import AddEvent from "./components/AddEvent";
-import Logout from "./components/Logout";
+import MyBookings from "./components/MyBookings";
+import ViewEvent from "./components/ViewEvent";
 
-// Layout wrapper
+// ===== Admin Imports =====
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import ManageUsers from "./pages/admin/ManageUsers";
+import ManageEvents from "./pages/admin/ManageEvents";
+import Feedbacks from "./pages/admin/Feedbacks";
+import AdminLayout from "./components/admin/AdminLayout";
+import ProtectedRoute from "./components/admin/ProtectedRoutes";
+import AddService from "./pages/admin/AddService";
+
+// ===== Layout Wrapper =====
 const Layout = ({ children }) => {
+  const location = useLocation();
+
+  // ❌ Hide Navbar & Footer for these routes
+  const hideForRoutes = ["/admin", "/auth", "/addevent", "/myaccount","/viewevent","/mybookings", "/dashboard", "/complete-profile"];
+  const shouldHideLayout = hideForRoutes.some((path) =>
+    location.pathname.startsWith(path)
+  );
+
   return (
     <>
-      <Navbar />
+      {!shouldHideLayout && <Navbar />}
       {children}
-      <Footer />
+      {!shouldHideLayout && <Footer />}
     </>
   );
 };
-
 
 const App = () => {
   return (
     <Router>
       <Layout>
         <Routes>
+          {/* === USER ROUTES === */}
           <Route path="/" element={<HeroSection />} />
           <Route path="/services" element={<Services />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/addevent/:id" element={<AddEvent />} />
-          <Route path="/logout" element={<Logout />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/myaccount" element={<MyAccount />} />
+          <Route path="/complete-profile" element={<CompleteProfile />} />
+          <Route path="/dashboard" element={<CustomerDashboard />} />
+          <Route path="/mybookings" element={<MyBookings />} />
+          
+          <Route path="/viewevent" element={<ViewEvent />} />
+           <Route path="/addevent/:id" element={<AddEvent />} />
 
+
+          {/* === ADMIN ROUTES === */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="users" element={<ManageUsers />} />
+            <Route path="events" element={<ManageEvents />} />
+            <Route path="feedbacks" element={<Feedbacks />} />
+            <Route path="addservice" element={<AddService />} />
+          </Route>
         </Routes>
       </Layout>
     </Router>

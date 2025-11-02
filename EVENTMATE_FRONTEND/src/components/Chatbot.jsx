@@ -42,22 +42,16 @@ const Chatbot = () => {
   };
 
   // 🧱 Styles
-  const containerStyle = {
-    position: "fixed",
-    bottom: "20px",
-    right: "20px",
-    width: "350px",
-    height: isMinimized ? "40px" : "500px",
-    background: "#fff8ef",
-    border: "2px solid #b37a3d",
-    borderRadius: "10px",
-    display: "flex",
-    flexDirection: "column",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.3)",
-    zIndex: 9999,
-    transition: "all 0.3s ease-in-out",
-    overflow: "hidden",
-  };
+
+const containerStyle = {
+  width: "100%",
+  height: "100%",
+  background: "#fff8ef",
+  display: "flex",
+  flexDirection: "column",
+  borderRadius: "0 0 12px 12px",
+};
+
 
   const headerStyle = {
     background: "#b37a3d",
