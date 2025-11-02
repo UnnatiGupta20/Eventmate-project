@@ -1,14 +1,31 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 
-const Rating = () => {
+const AddEvent = () => {
+  const { id } = useParams();
+  const location = useLocation();
+  const service = location.state;
+  const navigate = useNavigate();
+
+  const [activeTab, setActiveTab] = useState("details");
   const [cities, setCities] = useState([]);
   const [halls, setHalls] = useState([]);
-  const [selectedCity, setSelectedCity] = useState("");
-  const [selectedHall, setSelectedHall] = useState("");
-  const [rating, setRating] = useState(1);
 
-  // Fetch city list on mount
+  const [formData, setFormData] = useState({
+    eventName: "",
+    eventType: service?.title || "",
+    eventDescription: "",
+    eventDate: "",
+    eventTime: "",
+    eventDuration: "",
+    eventCity: "",
+    venueName: "",
+    eventCapacity: "",
+    eventGuests: "",
+    eventNotes: "",
+  });
+
+  // ✅ Fetch all cities + check session
   useEffect(() => {
     const fetchCities = async () => {
       try {
@@ -16,160 +33,350 @@ const Rating = () => {
         if (res.ok) {
           const data = await res.json();
           setCities(data);
+        } else {
+          console.error("Failed to fetch cities");
         }
-      } catch (err) {
-        console.error("Failed to fetch cities:", err);
+      } catch (error) {
+        console.error("Error fetching cities:", error);
       }
     };
-    fetchCities();
-  }, []);
 
-  // Fetch halls when selectedCity changes
+    const checkSession = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/getSessionUser", {
+          method: "GET",
+          credentials: "include",
+        });
+        if (res.status === 401) {
+          alert("Session expired. Please login again.");
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error("Session check failed:", error);
+      }
+    };
+
+    fetchCities();
+    checkSession();
+  }, [navigate]);
+
+  // ✅ Fetch halls when city changes
   useEffect(() => {
     const fetchHalls = async () => {
-      if (!selectedCity) {
+      if (!formData.eventCity) {
         setHalls([]);
-        setSelectedHall("");
         return;
       }
+
       try {
-        const res = await fetch(`http://localhost:8080/hall_list?city=${selectedCity}`);
+        const res = await fetch(
+          `http://localhost:8080/hall_list?city=${encodeURIComponent(
+            formData.eventCity
+          )}`
+        );
         if (res.ok) {
           const data = await res.json();
           setHalls(data);
-          setSelectedHall(""); // reset hall selection
+        } else {
+          setHalls([]);
         }
-      } catch (err) {
-        console.error("Failed to fetch halls:", err);
+      } catch (error) {
+        console.error("Error fetching halls:", error);
         setHalls([]);
       }
     };
-    fetchHalls();
-  }, [selectedCity]);
 
-  const handleSubmit = () => {
-    if (!selectedCity || !selectedHall) {
-      alert("Please select both city and hall.");
+    fetchHalls();
+  }, [formData.eventCity]);
+
+  // ✅ Fetch capacity when hall is selected
+  useEffect(() => {
+    const fetchCapacity = async () => {
+      if (!formData.eventCity || !formData.venueName) return;
+
+      try {
+        const res = await fetch(
+          `http://localhost:8080/hallCapacity?hall=${encodeURIComponent(
+            formData.venueName
+          )}&city=${encodeURIComponent(formData.eventCity)}`
+        );
+        if (res.ok) {
+          const capacity = await res.json();
+          setFormData((prev) => ({ ...prev, eventCapacity: capacity }));
+        } else {
+          setFormData((prev) => ({ ...prev, eventCapacity: "" }));
+        }
+      } catch (error) {
+        console.error("Error fetching capacity:", error);
+        setFormData((prev) => ({ ...prev, eventCapacity: "" }));
+      }
+    };
+
+    fetchCapacity();
+  }, [formData.venueName, formData.eventCity]);
+
+  // ✅ Handle input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // Reset halls and capacity when city changes
+    if (name === "eventCity") {
+      setFormData({
+        ...formData,
+        eventCity: value,
+        venueName: "",
+        eventCapacity: "",
+      });
+      setHalls([]);
       return;
     }
 
-    axios
-      .post(`http://localhost:8080/rating/${selectedCity}/${selectedHall}?rating=${rating}`)
-      .then((res) => alert(res.data))
-      .catch((err) => console.error(err));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const styles = {
-    container: {
-      padding: "30px",
-      maxWidth: "450px",
-      margin: "50px auto",
-      backgroundColor: "#fff7ea",
-      borderRadius: "12px",
-      boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
-      fontFamily: '"Nunito Sans", sans-serif',
-      textAlign: "center",
-    },
-    heading: {
-      fontSize: "26px",
-      marginBottom: "20px",
-      color: "#a2783a",
-    },
-    label: {
-      display: "block",
-      marginTop: "15px",
-      marginBottom: "8px",
-      fontWeight: 600,
-      textAlign: "left",
-    },
-    select: {
-      width: "100%",
-      padding: "8px",
-      borderRadius: "6px",
-      border: "1px solid #ccc",
-      fontSize: "16px",
-    },
-    input: {
-      width: "80px",
-      padding: "8px",
-      border: "1px solid #ccc",
-      borderRadius: "6px",
-      fontSize: "16px",
-      textAlign: "center",
-    },
-    button: {
-      marginTop: "25px",
-      padding: "10px 20px",
-      backgroundColor: "#a2783a",
-      color: "#fff",
-      border: "none",
-      borderRadius: "8px",
-      cursor: "pointer",
-      fontSize: "16px",
-      fontWeight: 600,
-      transition: "background 0.3s",
-    },
-    buttonHover: {
-      backgroundColor: "#8a642f",
-    },
+  // ✅ Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.eventName || !formData.eventCity || !formData.venueName) {
+      alert("Please fill all required fields.");
+      return;
+    }
+
+    const payload = {
+      eventName: formData.eventName,
+      eventType: formData.eventType,
+      eventDescription: formData.eventDescription,
+      eventDate: formData.eventDate,
+      eventTime: formData.eventTime,
+      eventDuration: parseInt(formData.eventDuration),
+      eventGuests: parseInt(formData.eventGuests),
+      eventNotes: formData.eventNotes,
+      serviceId: id,
+      venue: {
+        venueHall: formData.venueName,
+        venueCity: formData.eventCity,
+      },
+    };
+
+    try {
+      const response = await fetch("http://localhost:8080/addevent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        alert("Event saved successfully!");
+        navigate("/services");
+      } else if (response.status === 401) {
+        alert("Session expired. Please login again.");
+        navigate("/login");
+      } else if (response.status === 409) {
+        const msg = await response.text();
+        alert(msg);
+      } else {
+        const err = await response.text();
+        alert(err || "Failed to save event.");
+      }
+    } catch (error) {
+      console.error("Error saving event:", error);
+      alert("Error connecting to backend.");
+    }
   };
 
-  const [hover, setHover] = useState(false);
-
+  // ✅ Render UI
   return (
-    <div style={styles.container}>
-      <h2 style={styles.heading}>Rate Venue</h2>
+    <div className="add-event" style={{ padding: "2rem" }}>
+      <h2>Add Event – {service?.title || `Service ${id}`}</h2>
 
-      <label style={styles.label}>Select City</label>
-      <select
-        style={styles.select}
-        value={selectedCity}
-        onChange={(e) => setSelectedCity(e.target.value)}
+      {/* Tabs */}
+      <div
+        className="subnav"
+        style={{ display: "flex", gap: "1rem", margin: "1rem 0" }}
       >
-        <option value="">-- Choose City --</option>
-        {cities.map((city, idx) => (
-          <option key={idx} value={city}>
-            {city}
-          </option>
+        {["details", "datetime", "venue", "guests"].map((tab) => (
+          <button
+            key={tab}
+            className={activeTab === tab ? "active" : ""}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab === "details"
+              ? "Event Details"
+              : tab === "datetime"
+              ? "Date & Time"
+              : tab === "venue"
+              ? "Venue"
+              : "Guests"}
+          </button>
         ))}
-      </select>
+      </div>
 
-      <label style={styles.label}>Select Hall</label>
-      <select
-        style={styles.select}
-        value={selectedHall}
-        onChange={(e) => setSelectedHall(e.target.value)}
-        disabled={!selectedCity}
-      >
-        <option value="">-- Choose Hall --</option>
-        {halls.map((hall, idx) => (
-          <option key={idx} value={hall}>
-            {hall}
-          </option>
-        ))}
-      </select>
+      {/* Tab Content */}
+      <div className="tab-content">
+        {/* 🟩 DETAILS TAB */}
+        {activeTab === "details" && (
+          <form className="event-form">
+            <div>
+              <label>Event Name</label>
+              <input
+                type="text"
+                name="eventName"
+                value={formData.eventName}
+                onChange={handleChange}
+                placeholder="Enter event name"
+                required
+              />
+            </div>
+            <div>
+              <label>Event Type</label>
+              <input
+                type="text"
+                name="eventType"
+                value={formData.eventType}
+                readOnly
+              />
+            </div>
+            <div>
+              <label>Event Description</label>
+              <textarea
+                name="eventDescription"
+                value={formData.eventDescription}
+                onChange={handleChange}
+                rows="4"
+                placeholder="Write details..."
+              />
+            </div>
+            <button type="button" onClick={() => setActiveTab("datetime")}>
+              Next
+            </button>
+          </form>
+        )}
 
-      <label style={styles.label}>Rating (1-10)</label>
-      <input
-        type="number"
-        min="1"
-        max="10"
-        value={rating}
-        onChange={(e) => setRating(e.target.value)}
-        style={styles.input}
-      />
+        {/* 🟩 DATE & TIME TAB */}
+        {activeTab === "datetime" && (
+          <form className="event-form">
+            <div>
+              <label>Date</label>
+              <input
+                type="date"
+                name="eventDate"
+                value={formData.eventDate}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div>
+              <label>Time</label>
+              <input
+                type="time"
+                name="eventTime"
+                value={formData.eventTime}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div>
+              <label>Duration (Hours)</label>
+              <input
+                type="number"
+                name="eventDuration"
+                value={formData.eventDuration}
+                onChange={handleChange}
+                placeholder="e.g. 3 hours"
+                required
+              />
+            </div>
+            <button type="button" onClick={() => setActiveTab("venue")}>
+              Next
+            </button>
+          </form>
+        )}
 
-      <br />
-      <button
-        style={hover ? { ...styles.button, ...styles.buttonHover } : styles.button}
-        onClick={handleSubmit}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-      >
-        Submit Rating
-      </button>
+        {/* 🟩 VENUE TAB */}
+        {activeTab === "venue" && (
+          <form className="event-form">
+            <div>
+              <label>City</label>
+              <select
+                name="eventCity"
+                value={formData.eventCity}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select City</option>
+                {cities.map((city, idx) => (
+                  <option key={idx} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label>Banquet Hall</label>
+              <select
+                name="venueName"
+                value={formData.venueName}
+                onChange={handleChange}
+                disabled={!formData.eventCity}
+                required
+              >
+                <option value="">Select Hall</option>
+                {halls.map((hall, idx) => (
+                  <option key={idx} value={hall}>
+                    {hall}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label>Capacity</label>
+              <input
+                type="number"
+                value={formData.eventCapacity}
+                readOnly
+                placeholder="Automatically set based on hall"
+              />
+            </div>
+            <button type="button" onClick={() => setActiveTab("guests")}>
+              Next
+            </button>
+          </form>
+        )}
+
+        {/* 🟩 GUESTS TAB */}
+        {activeTab === "guests" && (
+          <form className="event-form" onSubmit={handleSubmit}>
+            <div>
+              <label>Number of Guests</label>
+              <input
+                type="number"
+                name="eventGuests"
+                value={formData.eventGuests}
+                onChange={handleChange}
+                placeholder="Enter number of guests"
+                required
+              />
+            </div>
+            <div>
+              <label>Special Notes</label>
+              <textarea
+                name="eventNotes"
+                value={formData.eventNotes}
+                onChange={handleChange}
+                rows="3"
+                placeholder="Any requirements for guests..."
+              />
+            </div>
+            <button type="submit" style={{ marginTop: "1rem" }}>
+              Submit Event
+            </button>
+          </form>
+        )}
+      </div>
     </div>
   );
 };
 
-export default Rating;
+export default AddEvent;
