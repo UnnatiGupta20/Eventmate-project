@@ -29,7 +29,7 @@ export const venues = [
     rating: 4.8,
     minGuests: 150, 
     maxGuests: 500 ,
-    image: "/hall5.jpg",
+    url: "/hall5.jpg",
   },
   {
     id: 4,
@@ -39,7 +39,7 @@ export const venues = [
     rating: 4.8,
     minGuests: 150, 
     maxGuests: 500 ,
-    image: "/hall6.jpg",
+    url: "/hall6.jpg",
   },
   {
     id: 5,
@@ -49,7 +49,7 @@ export const venues = [
     minGuests: 150, 
     maxGuests: 500 ,
     rating: 4.5,
-    image: "/hall3.jpg",
+    url: "/hall3.jpg",
   },
   {
     id: 6,
@@ -59,7 +59,7 @@ export const venues = [
     minGuests: 150, 
     maxGuests: 500 ,
     rating: 4.5,
-    image: "/hall7.jpg",
+    url: "/hall7.jpg",
   },
   {
     id: 7,
@@ -69,7 +69,7 @@ export const venues = [
     minGuests: 150, 
     maxGuests: 500 ,
     rating: 4.5,
-    image: "/hall8.jpg",
+    url: "/hall8.jpg",
   },
   {
     id: 8,
@@ -79,7 +79,7 @@ export const venues = [
     minGuests: 150, 
     maxGuests: 500 ,
     rating: 4.5,
-    image: "/hall9.jpg",
+    url: "/hall9.jpg",
   },
   {
     id: 9,
@@ -89,7 +89,7 @@ export const venues = [
      minGuests: 150, 
     maxGuests: 500 ,
     rating: 4.8,
-    image: "/hall4.jpg",
+    url: "/hall4.jpg",
   },
     {
     id: 10,
@@ -99,7 +99,7 @@ export const venues = [
     rating: 4.8,
      minGuests: 150, 
     maxGuests: 500 ,
-    image: "/hall10.jpg",
+    url: "/hall10.jpg",
   },
   
 ];
