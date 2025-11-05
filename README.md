@@ -129,7 +129,8 @@ Copy code
 
 ## 👨‍💻 Contributors 
 
-Unnati Gupta 
+Unnati Gupta
+
 Naveen Kumar
 
 ## 📎 License
