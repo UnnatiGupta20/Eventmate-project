@@ -130,6 +130,7 @@ Copy code
 ## 👨‍💻 Contributors 
 
 Unnati Gupta 
+Naveen Kumar
 
 ## 📎 License
 This project is built for educational and project purposes.
