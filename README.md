@@ -129,8 +129,7 @@ Copy code
 
 ## 👨‍💻 Contributors 
 
-Unnati Gupta – Frontend Developer (React, UI/UX)
-
+Unnati Gupta 
 
 ## 📎 License
 This project is built for educational and project purposes.
