@@ -1,52 +1,47 @@
 package com.eventmate.Entity;
 
-import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 @Entity
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(name="events")
+@ToString
 public class Event {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer eventId;
 	private String eventName;
 	private String eventType;
 	private String eventDescription;
-	@JsonFormat(pattern="yyyy-MM-dd")
 	private LocalDate eventDate;
-	
-	@JsonFormat(pattern="HH:mm")
 	private LocalTime eventTime;
 	private Integer eventDuration;
-	private String eventCity;
-	private String eventHall;
-	private Integer eventGuests;
+	private String eventDecoration;
+	private String eventFood;
 	private String eventNotes;
-	private Integer serviceId;
+	private String eventStatus = "active";
+	@ManyToOne
+    @JoinColumn(name = "venue_id")
+    private Venue eventVenue;  
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="uid",referencedColumnName = "id")
-	@JsonIgnore
-	private User user;
+	@ManyToOne
+	 @JoinColumn(name = "music_system_id")
+    private MusicSystem eventMusicSystem; 
 	
-
+	@ManyToOne
+    @JoinColumn(name = "photographer_id")
+    private Photographer eventPhotographer;
+	
+	@ManyToOne
+	@JoinColumn(name="user_id")
+	private User eventUser;
 }

@@ -1,43 +1,51 @@
 package com.eventmate.Service;
 
-import java.time.LocalTime;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.eventmate.Entity.Event;
-import com.eventmate.Entity.User;
 import com.eventmate.Repo.EventRepo;
+
 @Service
 public class EventServiceImpl implements EventService{
+
 	@Autowired
-	EventRepo er;
+	EventRepo eventRepo;
 	@Override
-	public Event saveEvent(Event e) {
-		return er.save(e);
-	}
-	
-	@Override
-	public boolean verifyOverLaping(Event e) {
+	public Event save(Event event) {
 		// TODO Auto-generated method stub
-		LocalTime newStart=e.getEventTime();
-		LocalTime newEnd=newStart.plusHours(e.getEventDuration());
-		 List<Event> eventList=er.findByEventHallAndEventCityAndEventDate(e.getEventHall(), e.getEventCity(), e.getEventDate());
-		for(Event event:eventList) {
-			LocalTime existingStart=event.getEventTime();
-			LocalTime existingEnd=existingStart.plusHours(event.getEventDuration());
-			if( newStart.isBefore(existingEnd)&&newEnd.isAfter(existingStart)) {
-				return true;
+		return eventRepo.save(event);
+	}
+	@Override
+	public List<Event> getEventsByUserId(Integer id) {
+		// TODO Auto-generated method stub
+		List<Event> list= new ArrayList<>();
+		for(Event e:eventRepo.findAll()) {
+			if(e.getEventUser().getUserId().equals(id)) {
+				list.add(e);
 			}
 		}
-		return false;
+		return list;
 	}
-
 	@Override
-	public List<Event> getEventsByUser(User u) {
+	public Event getEventById(Integer id) {
 		// TODO Auto-generated method stub
-		return er.findByUser(u);
+		return eventRepo.findById(id).orElse(null);
+	}
+	@Override
+	public List<Event> eventsList() {
+		// TODO Auto-generated method stub
+		return eventRepo.findAll();
+	}
+	@Override
+	public boolean isVenueBooked(Integer venueId, LocalDate eventDate) {
+		// TODO Auto-generated method stub
+		return eventRepo.existsByEventVenue_VenueIdAndEventDateAndEventStatus(venueId, eventDate, "active");
+
 	}
 
 }

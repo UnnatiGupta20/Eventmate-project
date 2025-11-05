@@ -23,7 +23,7 @@ import ViewEvent from "./components/ViewEvent";
 
 // ===== Admin Imports =====
 import AdminLogin from "./pages/admin/AdminLogin";
-import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminDashboard from "./components/admin/AdminDashboard";
 import ManageUsers from "./pages/admin/ManageUsers";
 import ManageEvents from "./pages/admin/ManageEvents";
 import Feedbacks from "./pages/admin/Feedbacks";
@@ -36,7 +36,7 @@ const Layout = ({ children }) => {
   const location = useLocation();
 
   // ❌ Hide Navbar & Footer for these routes
-  const hideForRoutes = ["/admin", "/auth", "/addevent", "/myaccount","/viewevent","/mybookings", "/dashboard", "/complete-profile"];
+  const hideForRoutes = ["/admin", "/auth", "/myaccount","/viewevent","/mybookings", "/dashboard", "/complete-profile"];
   const shouldHideLayout = hideForRoutes.some((path) =>
     location.pathname.startsWith(path)
   );
@@ -71,7 +71,7 @@ const App = () => {
 
 
           {/* === ADMIN ROUTES === */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLogin />} />
 
           <Route
             path="/admin"

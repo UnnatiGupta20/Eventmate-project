@@ -1,12 +1,15 @@
 package com.eventmate.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.eventmate.Entity.Event;
-import com.eventmate.Entity.User;
 
 public interface EventService {
-	public Event saveEvent(Event e);
-	public List<Event> getEventsByUser(User u);
-	public boolean verifyOverLaping(Event e);
+
+	public Event save(Event event);
+	List<Event> getEventsByUserId(Integer id);
+	Event getEventById(Integer id);
+	List<Event> eventsList();
+	boolean isVenueBooked(Integer venueId, LocalDate eventDate);
 }

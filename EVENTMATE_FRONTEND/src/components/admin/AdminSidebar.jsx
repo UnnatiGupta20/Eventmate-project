@@ -1,7 +1,13 @@
+import axios from "axios";
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink ,useNavigate} from "react-router-dom";
 
 const AdminSidebar = () => {
+  const navigate= useNavigate();
+   const handleLogout = async () => {
+    await axios.get("http://localhost:8080/admin/logout"); // call backend logout
+    navigate("/admin"); // redirect after logout
+  };
   return (
     <aside className="admin-sidebar">
       <h2 className="admin-logo">Admin Panel</h2>
@@ -23,9 +29,12 @@ const AdminSidebar = () => {
         </NavLink>
       </nav>
       <div className="admin-logout">
-        <NavLink to="/" className="logout-btn">
+        <NavLink to="/admin" className="logout-btn" onClick={handleLogout}>
+          
           Logout
+        
         </NavLink>
+        
       </div>
     </aside>
   );

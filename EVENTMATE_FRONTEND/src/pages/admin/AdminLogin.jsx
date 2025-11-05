@@ -3,21 +3,37 @@ import { useNavigate } from "react-router-dom";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ adminEmail: "", adminPassword: "" });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Simple fake login check
-    if (formData.email === "admin@gmail.com" && formData.password === "admin123") {
-      localStorage.setItem("isAdminLoggedIn", "true");
-      navigate("/admin/dashboard"); // redirect to dashboard
-    } else {
-      alert("Invalid admin credentials!");
+    try {
+      const response = await fetch("http://localhost:8080/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          adminEmail: formData.adminEmail,
+          adminPassword: formData.adminPassword,
+        }),
+      });
+
+      const result = await response.text();
+
+      if (result === "Login Successful") {
+        localStorage.setItem("isAdminLoggedIn", "true");
+        navigate("/admin/dashboard");
+      } else {
+        alert("Invalid admin credentials!");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      alert("Something went wrong. Please try again later.");
     }
   };
 
@@ -28,21 +44,30 @@ const AdminLogin = () => {
         <form onSubmit={handleSubmit}>
           <input
             type="email"
-            name="email"
+            name="adminEmail"
             placeholder="Admin Email"
-            value={formData.email}
+            value={formData.adminEmail}
             onChange={handleChange}
             required
           />
           <input
             type="password"
-            name="password"
+            name="adminPassword"
             placeholder="Admin Password"
-            value={formData.password}
+            value={formData.adminPassword}
             onChange={handleChange}
             required
           />
           <button type="submit">Login</button>
+
+          {/* ✅ Home Button (Same Style, Below Login) */}
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            style={{ marginTop: "10px" }}
+          >
+            Home
+          </button>
         </form>
       </div>
     </div>

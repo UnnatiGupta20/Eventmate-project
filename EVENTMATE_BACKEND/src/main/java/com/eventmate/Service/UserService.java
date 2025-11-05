@@ -1,10 +1,12 @@
 package com.eventmate.Service;
 
-import com.eventmate.Entity.User;
-import com.eventmate.Repo.UserRepo;
+import java.util.List;
 
-public interface UserService{
-	public User saveUser(User u);
-	public User getUser(String email,String password);
-	
+import com.eventmate.Entity.User;
+
+public interface UserService {
+
+	User save(User user);
+	User login(String userEmail,String userPassword);
+	List<User> getUsersList();
 }

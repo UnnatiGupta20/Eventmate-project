@@ -1,5 +1,16 @@
-import React, { useState } from "react";
-import { FaUser, FaCalendarAlt, FaEdit, FaLightbulb, FaCog, FaSignOutAlt } from "react-icons/fa";
+
+
+
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import {
+  FaUser,
+  FaCalendarAlt,
+  FaEdit,
+  FaCog,
+  FaSignOutAlt,
+} from "react-icons/fa";
 
 import DashboardOverview from "./DashboardOverview";
 import MyBookings from "./MyBookings";
@@ -7,9 +18,30 @@ import EditProfile from "./EditProfile";
 import Recommended from "./Recommended";
 import Settings from "./Settings";
 import AddEvent from "./AddEvent";
+import CompleteProfile from "./CompleteProfile";
 
 const CustomerDashboard = () => {
   const [activeSection, setActiveSection] = useState("overview");
+  const navigate = useNavigate();
+
+  // ✅ Verify session on component load
+  useEffect(() => {
+    const verifySession = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/user/getsession", {
+          withCredentials: true,
+        });
+
+        if (!response.data || Object.keys(response.data).length === 0) {
+          navigate("/"); // redirect if session invalid or empty
+        }
+      } catch (error) {
+        navigate("/"); // redirect if request fails or 401 error
+      }
+    };
+
+    verifySession();
+  }, [navigate]);
 
   const renderSection = () => {
     switch (activeSection) {
@@ -18,12 +50,11 @@ const CustomerDashboard = () => {
       case "bookings":
         return <MyBookings />;
       case "edit":
-        return <EditProfile />;
-      
+        return <CompleteProfile />;
       case "settings":
         return <Settings />;
       case "addevent":
-         return <AddEvent />;
+        return <AddEvent />;
       default:
         return <DashboardOverview />;
     }
@@ -42,12 +73,14 @@ const CustomerDashboard = () => {
           >
             <FaUser /> Overview
           </li>
+
           <li
             className={activeSection === "bookings" ? "active" : ""}
             onClick={() => setActiveSection("bookings")}
           >
             <FaCalendarAlt /> My Bookings
           </li>
+
           <li
             className={activeSection === "edit" ? "active" : ""}
             onClick={() => setActiveSection("edit")}
@@ -61,10 +94,10 @@ const CustomerDashboard = () => {
           >
             <FaCog /> Settings
           </li>
+
           <li onClick={() => (window.location.href = "/")}>
             <FaSignOutAlt /> Back to Home
           </li>
-
         </ul>
       </aside>
 

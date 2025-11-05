@@ -31,14 +31,14 @@ public class ChatBotController {
      * Combines the user's message with the latest venue data
      */
     private String buildPrompt(String userMessage) {
-        List<Venue> venues = venueService.venueList();
+        List<Venue> venues = venueService.getAll();
 
         StringBuilder sb = new StringBuilder();
         sb.append("You are a helpful assistant. Here are the venues currently available:\n");
         for (Venue v : venues) {
-            sb.append("- ").append(v.getVenueHall())
+            sb.append("- ").append(v.getVenueName())
               .append(" in ").append(v.getVenueCity())
-              .append(", Capacity: ").append(v.getVenueCapacity())
+              .append(", Capacity: ").append(v.getVenueMaxGuests())
               .append(", Average Rating: ")
               .append(v.getVenueRating() != null ? String.format("%.2f", v.getVenueRating()) : "N/A")
               .append("\n");
